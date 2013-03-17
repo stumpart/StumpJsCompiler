@@ -35,7 +35,7 @@ class YUICompressor extends ACompiler
 
 		$this->command = sprintf($this->commandTemplate, $this->executable,
 		                          $this->fileToMinify->getRealPath(), $this->minifiedOutput);
-        print_r($this->command);
+        //print_r($this->command);
 	}
 
 

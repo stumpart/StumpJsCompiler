@@ -8,6 +8,7 @@ use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use StumpJsCompiler\Channels\Minify;
 use StumpJsCompiler\Channels\Combiner;
+use StumpJsCompiler\Cache;
 
 class JsCompiler implements FactoryInterface
 {
@@ -22,6 +23,8 @@ class JsCompiler implements FactoryInterface
     protected $files;
 	
     protected $type;
+    
+    protected $cacheObj;
 
 	/* (non-PHPdoc)
 	 * @see \Zend\ServiceManager\FactoryInterface::createService()
@@ -34,6 +37,9 @@ class JsCompiler implements FactoryInterface
 
 		$this->setBinLoc();
         $this->setSrcLocation();
+        
+        //create caching obj
+        $this->cacheObj = new Cache();
 		return $this;
 	}
     /**
@@ -43,16 +49,22 @@ class JsCompiler implements FactoryInterface
 	{
 		$this->type = $type;
 	    $this->compileFiles($type);
-
-	    if(isset($this->config['compiler']['minify']) &&
-	       $this->config['compiler']['minify']){
-	       $min = new Minifier($this);
-	       $min->run();
-        }
-
-        $combiner = new Combiner($this);
-        $combiner->run();
-        $result = $combiner->getCombinedContents();
+    
+	    if(!($contents= $this->cacheObj->get($type))){
+	        if(isset($this->config['compiler']['minify']) &&
+	                $this->config['compiler']['minify']){
+	            $min = new Minifier($this);
+	            $min->run();
+	        }
+	        
+	        $combiner = new Combiner($this);
+	        $combiner->run();
+	        $result = $combiner->getCombinedContents();
+	        //cache results
+	        $this->cacheObj->set($type, $result);
+	    }else{
+	        echo "it was cached";
+	    }
 	}
 
         /**

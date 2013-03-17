@@ -3,6 +3,7 @@
 namespace StumpJsCompiler\Channels;
 
 use StumpJsCompiler\Channels\IMinify;
+use StumpJsCompiler\Service\JsCompiler;
 
 class Combiner extends AChannel {
 
@@ -20,7 +21,7 @@ class Combiner extends AChannel {
 
 	public function run()
 	{
-		$this->getEventManager()->trigger('before.combine', $this, array());
+        $this->getEventManager()->trigger('before.combine', $this, array());
 
         $files = $this->compilerFactory->getFiles();
 

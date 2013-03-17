@@ -5,5 +5,5 @@ namespace StumpJsCompiler\Channels;
 interface IMinify {
     function minify();
     
-    function setMinifiedDirectory();
+    public function setMinifiedDirectory();
 }

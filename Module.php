@@ -1,13 +1,30 @@
 <?php
 namespace StumpJsCompiler;
 use Zend\ModuleManager\Feature\ServiceProviderInterface;
+use Zend\ModuleManager\Feature\ControllerProviderInterface;
 use Zend\ModuleManager\ModuleManager;
+use Zend\EventManager\EventInterface as Event;
+use Zend\Mvc\Controller\ControllerManager;
+use Zend\ServiceManager\ServiceManager;
 
 class Module implements ServiceProviderInterface
 {
-    public function init(ModuleManager $m)
+    
+    public function controllersInit($controllerInstance, ControllerManager $controllerManager)
     {
-        //print_r($m);
+        $this->injectControllerDependencies($controllerInstance, $controllerManager->getServiceLocator());
+    }
+    
+    /**
+     * 
+     * @param DispatchableInterface $controller
+     * @param ServiceLocatorInterface $serviceLocator
+     */
+    public function injectControllerDependencies($controller, ServiceManager $serviceLocator)
+    {
+        if ($controller instanceof JsCompilerAwareInterface) {
+            $controller->setJsCompiler($serviceLocator->get('jscompiler'));
+        }
     }
 
     public function getAutoloaderConfig()
@@ -35,6 +52,13 @@ class Module implements ServiceProviderInterface
             'factories'=>array(
             	'jscompiler'=>'StumpJsCompiler\Service\JsCompiler'
             )
+        );
+    }
+    
+    public function getControllerConfig()
+    {
+        return array(
+                'initializers'=>array(array($this, 'controllersInit'))
         );
     }
 }
