@@ -25,6 +25,10 @@ class JsCompiler implements FactoryInterface
     protected $type;
     
     protected $cacheObj;
+    
+    protected $timeStamp;
+    
+    protected $cachKey;
 
 	/* (non-PHPdoc)
 	 * @see \Zend\ServiceManager\FactoryInterface::createService()
@@ -45,12 +49,14 @@ class JsCompiler implements FactoryInterface
     /**
      *
      */
-	public function compile($type)
+	public function compile($type, $timestamp)
 	{
 		$this->type = $type;
-	    $this->compileFiles($type);
-    
-	    if(!($contents= $this->cacheObj->get($type))){
+		$this->timeStamp = $timestamp;
+	    $this->gatherSrcFiles($type);
+	    $this->setCacheKey();
+        
+	    if(!($contents= $this->cacheObj->get($this->cachKey))){
 	        if(isset($this->config['compiler']['minify']) &&
 	                $this->config['compiler']['minify']){
 	            $min = new Minifier($this);
@@ -59,15 +65,20 @@ class JsCompiler implements FactoryInterface
 	        
 	        $combiner = new Combiner($this);
 	        $combiner->run();
-	        $result = $combiner->getCombinedContents();
+	        $contents = $combiner->getCombinedContents();
 	        //cache results
-	        $this->cacheObj->set($type, $result);
-	    }else{
-	        echo "it was cached";
+	        $this->cacheObj->set($this->cachKey, $contents);
 	    }
+	    
+	    echo $contents;
+	}
+	
+	public function setCacheKey()
+	{
+	    $this->cachKey = $this->type.'_'.$this->timeStamp;
 	}
 
-        /**
+    /**
      *
      * @param string $src
      */
@@ -89,18 +100,25 @@ class JsCompiler implements FactoryInterface
 
         $this->srcLocation = $src;
     }
-
-    public function compileFiles($type)
+    
+    public function gatherSrcFiles($type)
     {
         if(isset($this->config['builds'][$type])){
             $paths = $this->config['builds'][$type];
-
+        
             if(is_array($paths)){
                 foreach($paths as $p){
                     $this->files[] = $this->srcLocation.DIRECTORY_SEPARATOR.$p;
                 }
             }
         }
+        
+        return $this;
+    }
+    
+    public function compileFiles($type)
+    {
+
     }
 
     public function getSrcLocation()
@@ -156,5 +174,10 @@ class JsCompiler implements FactoryInterface
 	{
 		$this->config['workarea'] = realpath($this->config['compiler']['workareaDir']).
 									DIRECTORY_SEPARATOR.$this->config['compiler']['modulename'];
+	}
+	
+	public function scriptLocation()
+	{
+	    
 	}
 }

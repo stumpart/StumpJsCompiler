@@ -6,9 +6,38 @@ use Zend\ModuleManager\ModuleManager;
 use Zend\EventManager\EventInterface as Event;
 use Zend\Mvc\Controller\ControllerManager;
 use Zend\ServiceManager\ServiceManager;
+use StumpJsCompiler\View\Helper\CompiledScript;
 
 class Module implements ServiceProviderInterface
 {
+    /**
+     * The priority in the mvc event route queue
+     * 
+     * @var int
+     */
+    public static $routePriority = 5; 
+    
+    protected $jsFileRegexPartial = "\/(?P<type>\w+)_(?P<timestamp>\d+)";
+    
+    public function onBootstrap(\Zend\Mvc\MvcEvent $e)
+    { 
+        $em = $e->getApplication()->getEventManager();
+        $em->attach(\Zend\Mvc\MvcEvent::EVENT_ROUTE, array($this, 'onRoute'), self::$routePriority);
+    }
+    
+    public function onRoute(\Zend\Mvc\MvcEvent $e)
+    {
+        $request = $e->getRequest();
+        $path = $request->getRequestUri();
+        $jsCompiler = $e->getApplication()->getServiceManager()->get("jscompiler");
+        
+        if(preg_match("/".__NAMESPACE__.$this->jsFileRegexPartial."/i", $path, $matches)){
+            $jsCompiler->compile($matches['type'], $matches['timestamp']);
+            
+            exit;
+        }
+    }
+    
     
     public function controllersInit($controllerInstance, ControllerManager $controllerManager)
     {
@@ -17,11 +46,12 @@ class Module implements ServiceProviderInterface
     
     /**
      * 
-     * @param DispatchableInterface $controller
-     * @param ServiceLocatorInterface $serviceLocator
+     * @param unknown_type $controller
+     * @param ServiceManager $serviceLocator
      */
     public function injectControllerDependencies($controller, ServiceManager $serviceLocator)
     {
+        //print_r($serviceLocator->get('router'));
         if ($controller instanceof JsCompilerAwareInterface) {
             $controller->setJsCompiler($serviceLocator->get('jscompiler'));
         }
@@ -58,7 +88,18 @@ class Module implements ServiceProviderInterface
     public function getControllerConfig()
     {
         return array(
-                'initializers'=>array(array($this, 'controllersInit'))
+            'initializers'=>array(array($this, 'controllersInit'))
+        );
+    }
+    
+    public function getViewHelperConfig()
+    {
+        return array(
+                'factories' => array(
+                    'compiledScript' => function($sm) {
+                        return new CompiledScript($sm);
+                    },
+                ),
         );
     }
 }
