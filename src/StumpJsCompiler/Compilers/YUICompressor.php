@@ -19,7 +19,7 @@ class YUICompressor extends ACompiler
      */
     protected $fileToMinify;
 
-    protected $minifiedOutput;
+    
 
 
 	public function __construct(JsCompiler $comp)
@@ -35,7 +35,6 @@ class YUICompressor extends ACompiler
 
 		$this->command = sprintf($this->commandTemplate, $this->executable,
 		                          $this->fileToMinify->getRealPath(), $this->minifiedOutput);
-        //print_r($this->command);
 	}
 
 
@@ -49,9 +48,7 @@ class YUICompressor extends ACompiler
     }
 
     public function minify()
-    {
-
-    }
+    {}
 
     public function fileToMinify($m)
     {

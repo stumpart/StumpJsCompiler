@@ -25,6 +25,11 @@ class Module implements ServiceProviderInterface
         $em->attach(\Zend\Mvc\MvcEvent::EVENT_ROUTE, array($this, 'onRoute'), self::$routePriority);
     }
     
+    /**
+     * Start before actual routing
+     * 
+     * @param \Zend\Mvc\MvcEvent $e
+     */
     public function onRoute(\Zend\Mvc\MvcEvent $e)
     {
         $request = $e->getRequest();
@@ -51,7 +56,6 @@ class Module implements ServiceProviderInterface
      */
     public function injectControllerDependencies($controller, ServiceManager $serviceLocator)
     {
-        //print_r($serviceLocator->get('router'));
         if ($controller instanceof JsCompilerAwareInterface) {
             $controller->setJsCompiler($serviceLocator->get('jscompiler'));
         }
@@ -73,7 +77,8 @@ class Module implements ServiceProviderInterface
 
     public function getConfig()
     {
-        return include __DIR__ . '/config/module.config.php';
+        return array_merge(include __DIR__ . '/config/module.config.php',
+                            array('modulename'=>strtolower(__NAMESPACE__)));
     }
 
     public function getServiceConfig()

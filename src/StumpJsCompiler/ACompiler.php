@@ -21,6 +21,10 @@ abstract class ACompiler implements IMinify{
 
     protected $minifiedDirectory;
     
+    protected $minifiedFiles;
+    
+    protected $minifiedOutput;
+    
 	public function __construct(JsCompiler $comp)
 	{
 		$this->compFactory = $comp;
@@ -102,6 +106,7 @@ abstract class ACompiler implements IMinify{
     private function execute()
     {
     	exec(escapeshellcmd($this->command), $output, $returnVar);
+    	$this->minifiedFiles[] = $this->minifiedOutput;
     }
 
     protected abstract function prepareExecution();
@@ -130,5 +135,15 @@ abstract class ACompiler implements IMinify{
     public function setMinifiedDirectory()
     {
     	$this->minifiedDirectory = $this->config['workarea'].DIRECTORY_SEPARATOR.'minified'; 
+    }
+    
+    public function getMinifiedDirectory()
+    {
+        return $this->minifiedDirectory;
+    }
+    
+    public function getMinifiedFiles()
+    {
+        return $this->minifiedFiles;
     }
 }

@@ -2,15 +2,18 @@
 
 namespace StumpJsCompiler\Channels;
 
+use StumpJsCompiler\CompilerServiceActionsInterface;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerAwareInterface;
 
-class AChannel implements EventManagerAwareInterface {
+abstract class AChannel implements EventManagerAwareInterface, CompilerServiceActionsInterface {
 
     const COMPILER_NAMESPACE = 'StumpJsCompiler\Compilers';
 
 	protected $events;
+	
+	protected $contents;
 
 	public function setEventManager(EventManagerInterface $events)
 	{
@@ -29,4 +32,23 @@ class AChannel implements EventManagerAwareInterface {
 		}
 		return $this->events;
 	}
+
+    abstract public function run ();
+
+
+	/** 
+	 * (non-PHPdoc)
+     * @see \StumpJsCompiler\CompilerServiceInterface::getContents()
+     */
+    public function getContents ()
+    {
+        return $this->contents;
+    }
+    
+    public function setContents($contents)
+    {
+        $this->contents = $contents;
+        return $this;
+    }
+
 }

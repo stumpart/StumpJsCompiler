@@ -51,6 +51,8 @@ class Minifier extends AChannel {
         }
 
         $this->getEventManager()->trigger('after.minify', $this, array());
+        
+        return $this->minifyAdapter->getMinifiedFiles();
     }
 
     /**

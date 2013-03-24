@@ -13,7 +13,6 @@ use Zend\View\Renderer\PhpRenderer;
  */
 class CompiledScript extends AbstractHelper
 {
-
     /**
      * 
      * @var Zend\View\HelperPluginManager
@@ -26,6 +25,10 @@ class CompiledScript extends AbstractHelper
      */
     protected $serviceLocator;
     
+    /**
+     * 
+     * @var Zend\View\Renderer\PhpRenderer
+     */
     protected $renderer;
 
     
@@ -41,12 +44,14 @@ class CompiledScript extends AbstractHelper
       $baseUrl = $this->serviceLocator->get( 'Request' )->getUri()->normalize();
       $files   = $this->serviceLocator->get('jscompiler')->gatherSrcFiles($type)->getFiles();
       $mappedFileTime = array_map("filemtime", $files);
+      
       rsort($mappedFileTime);
 
       $this->renderer->headScript()->setFile(
             $baseUrl.'stumpjscompiler/'.$type.'_'.$mappedFileTime[0].'.js',
             'text/javascript'
-       );       
+       );
+             
        return $this->renderer->headScript();
     }
 }

@@ -9,6 +9,7 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 use StumpJsCompiler\Channels\Minify;
 use StumpJsCompiler\Channels\Combiner;
 use StumpJsCompiler\Cache;
+use StumpJsCompiler\Export;
 
 class JsCompiler implements FactoryInterface
 {
@@ -29,8 +30,21 @@ class JsCompiler implements FactoryInterface
     protected $timeStamp;
     
     protected $cachKey;
+    
+    protected $contentTypes = array(
+                'javascript'=>'application/x-javascript; charset=utf-8',
+                'css'=>'text/css; charset=utf-8'
+            );
 
-	/* (non-PHPdoc)
+    /**
+     * 
+     * @var Export
+     */
+    protected $exportObj;
+    
+	/**
+	 * TODO find some way to inject the Cache and the Export objects
+	 *  
 	 * @see \Zend\ServiceManager\FactoryInterface::createService()
 	 */
 	public function createService(ServiceLocatorInterface $serviceLocator)
@@ -42,8 +56,12 @@ class JsCompiler implements FactoryInterface
 		$this->setBinLoc();
         $this->setSrcLocation();
         
-        //create caching obj
+        //create caching object
         $this->cacheObj = new Cache();
+        
+        //create export object
+        $this->exportObj = new Export();
+           
 		return $this;
 	}
     /**
@@ -57,22 +75,40 @@ class JsCompiler implements FactoryInterface
 	    $this->setCacheKey();
         
 	    if(!($contents= $this->cacheObj->get($this->cachKey))){
-	        if(isset($this->config['compiler']['minify']) &&
-	                $this->config['compiler']['minify']){
-	            $min = new Minifier($this);
-	            $min->run();
-	        }
-	        
-	        $combiner = new Combiner($this);
-	        $combiner->run();
-	        $contents = $combiner->getCombinedContents();
+            $contents = $this->runActions();
+            
 	        //cache results
 	        $this->cacheObj->set($this->cachKey, $contents);
 	    }
 	    
-	    echo $contents;
+	   $this->exportObj->setContents($contents);
+	    $this->prepareForExport();
+	    $this->exportObj->send();
 	}
 	
+	public function runActions()
+	{
+	    $contents = '';
+	    $actionsCollection = (array)$this->config['actions'];
+	    foreach($actionsCollection as $action)
+	    {
+	        $actionObj = new $action($this);
+	        $contents = $actionObj->setContents($contents)->run();	      
+	    }
+	    
+	    return $contents;
+	}
+	
+	
+	protected function prepareForExport()
+	{
+	    $this->exportObj->setContentType($this->contentTypes['javascript']);
+	    $this->exportObj->setCacheLength($this->config['builds'][$this->type]['cache-lifetime']);
+	    $this->exportObj->initHeaders();
+
+	    return $this->exportObj;
+	}
+
 	public function setCacheKey()
 	{
 	    $this->cachKey = $this->type.'_'.$this->timeStamp;
@@ -103,8 +139,8 @@ class JsCompiler implements FactoryInterface
     
     public function gatherSrcFiles($type)
     {
-        if(isset($this->config['builds'][$type])){
-            $paths = $this->config['builds'][$type];
+        if(isset($this->config['builds'][$type]['files'])){
+            $paths = $this->config['builds'][$type]['files'];
         
             if(is_array($paths)){
                 foreach($paths as $p){

@@ -11,8 +11,6 @@ class Combiner extends AChannel {
 
 	protected $destination;
 
-    protected $combinedContents = '';
-
 
     public function __construct(JsCompiler $js)
     {
@@ -22,20 +20,18 @@ class Combiner extends AChannel {
 	public function run()
 	{
         $this->getEventManager()->trigger('before.combine', $this, array());
-
-        $files = $this->compilerFactory->getFiles();
-
-        foreach($files as $f){
-            $this->combinedContents .= file_get_contents($f);
+        $combinedResults = "";
+        
+        if(is_array($this->contents) && !empty($this->contents)){
+            foreach($this->contents as $f){
+                if(file_exists($f)){
+                    $combinedResults .= file_get_contents($f);
+                }
+            }   
         }
 
         $this->getEventManager()->trigger('after.combine', $this, array());
 
-        return $this;
+        return $combinedResults;
 	}
-
-    public function getCombinedContents()
-    {
-        return $this->combinedContents;
-    }
 }

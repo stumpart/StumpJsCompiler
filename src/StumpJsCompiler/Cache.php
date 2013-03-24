@@ -44,6 +44,11 @@ class Cache {
 	{
 	    $this->cacheObj->setItem($key, $item);
 	}
+	
+	public static function setDefaultStorage($default)
+	{
+	    self::$defaultStorage  = $default;
+	}
 }
 
 ?>
