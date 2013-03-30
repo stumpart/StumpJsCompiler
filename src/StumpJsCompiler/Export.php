@@ -2,6 +2,11 @@
 
 namespace StumpJsCompiler;
 
+use StumpJsCompiler\Service\JsCompiler;
+use Zend\EventManager\EventManagerInterface;
+use Zend\EventManager\EventManager;
+use Zend\EventManager\EventManagerAwareInterface;
+
 /**
  *
  * @author barringtonhenry
@@ -9,6 +14,9 @@ namespace StumpJsCompiler;
  */
 class Export {
 	
+    const PRE_EXPORT = 'compilerexport.pre';
+    const POST_EXPORT = 'compilerexport.post';
+    
     protected $contents;
     
     protected $cacheLength;
@@ -18,6 +26,13 @@ class Export {
     protected $headers;
     
     protected $LastModified;
+    
+    /**
+     * 
+     * @var Zend\EventManager\EventManager
+     */
+    protected $events;
+    
     
 	/**
 	 * 
@@ -45,33 +60,90 @@ class Export {
 	    $this->LastModified = gmdate('D, d M Y H:i:s', (int)$lm).' GMT';
 	}
 	
+	/**
+	 *
+	 * @param EventManagerInterface $events
+	 * @return
+	 */
+	public function setEventManager(EventManagerInterface $events)
+	{
+	    $events->setIdentifiers(array(
+	            __CLASS__,
+	            get_called_class(),
+	    ));
+	
+	    $this->events = $events;
+	    return $this;
+	}
+	
+	public function getEventManager()
+	{
+	    if (null === $this->events) {
+	        $this->setEventManager(new EventManager());
+	    }
+	    return $this->events;
+	}
+	
 	public function send()
 	{
-	    foreach($this->headers as $key=>$value){
-	        header($key . ': ' . $value);
-	    }
-	    
+	    $this->getEventManager()->trigger("compilerexport.pre", $this);
+	    $this->sendheaders();
 	    echo $this->contents;
+	    $this->getEventManager()->trigger("compilerexport.post", $this);
+	}
+	
+	public function sendheaders()
+	{	    
+	    foreach($this->headers as $key=>$value){
+	        if(is_int($key)){
+	            header( $value );
+	        }else{
+	            header( $key . ': ' . $value );
+	        }
+	    }
 	}
 	
 	public function initHeaders()
 	{
 	    $this->headers = 
 	    array(
-	          'Expires'         => gmdate('D, d M Y H:i:s', time() + $this->_cacheLength).' GMT',
+	          'Expires'         => gmdate('D, d M Y H:i:s', time() + $this->cacheLength).' GMT',
 	          'Content-Type'    => $this->fileType,
 	          'Content-Length'  => strlen($this->contents),
 	          'Last-Modified'   => $this->LastModified,
-	          'Cache-Control'   => 'max-age='.$this->_cacheLength.', must-revalidate',
+	          'Cache-Control'   => 'max-age='.$this->cacheLength.', must-revalidate',
 	          'ETag'            => sha1($this->LastModified)
 	         );  
 	}
 	
-	public function setHeader($name, $value)
+	/**
+	 * 
+	 * @param unknown_type $name
+	 * @param unknown_type $value
+	 * @return \StumpJsCompiler\Export
+	 */
+	public function setHeader($name, $value = null)
 	{
-	    $name  = $this->_normalizeHeader($name);
-	    $value = (string) $value;
-	    $this->headers[$name] = $value;
+	    if($value == null){
+	        $this->headers[] = $name;
+	    }else{
+	        $name  = $this->_normalizeHeader($name);
+	        $value = (string) $value;
+	        $this->headers[$name] = $value;
+	    }
+	    
+	    return $this;
+	}
+	
+	/**
+	 * 
+	 * @param array $headers
+	 */
+	public function setHeaders(array $headers)
+	{
+	    foreach($headers as $k=>$h){
+	        $this->setHeader($k, $h);    
+	    }
 	}
 	
 	/**
@@ -88,7 +160,6 @@ class Export {
 	    $filtered = str_replace(' ', '-', $filtered);
 	    return $filtered;
 	}
-	
 }
 
 ?>

@@ -75,8 +75,13 @@ abstract class ACompiler implements IMinify{
 	{
 		if($exec === null){
 			$config = $this->compFactory->getConfig();
-			$file = $config['files']['yuicompressor'];
-
+			$filekey = $config['compiler']['current'];
+			
+			if(isset($config['executables'][$filekey])){
+			    $file = $config['executables'][$filekey];
+			}else{
+			    //unknown executable throw exception
+			}
 			$this->executable = $this->compFactory->getBinLoc().DIRECTORY_SEPARATOR.$file;
 		}else{
 			$this->executable = $exec;

@@ -171,7 +171,17 @@ class JsCompiler implements FactoryInterface
 	    $this->exportObj->setCacheLength($this->config['builds'][$this->type]['cache-lifetime']);
 	    $this->exportObj->setLastModified($this->timeStamp);
 	    $this->exportObj->initHeaders();
-
+	    
+	    $compilerService = $this;
+        $this->exportObj->getEventManager()->attach(Export::PRE_EXPORT, function($e) use ($compilerService){
+            $config = $compilerService->getConfig();
+            $compilationConfig = $config['builds'][$compilerService->getType()];
+             
+            if(isset( $compilationConfig['headers'] )){
+               $e->getTarget()->setHeaders($compilationConfig['headers']);
+            }
+        });
+	    
 	    return $this->exportObj;
 	}
     /**
@@ -320,6 +330,24 @@ class JsCompiler implements FactoryInterface
 	{
 		$this->config['workarea'] = realpath($this->config['compiler']['workareaDir']).
 									DIRECTORY_SEPARATOR.$this->config['compiler']['modulename'];
+	}
+	
+	
+	public function ifNotModified(array $matches)
+	{
+	    $iETag = sha1($matches['timestamp']);
+	    $lastModified = gmdate('D, d M Y H:i:s', $matches['timestamp']).' GMT';
+	    
+	    if (
+	            (isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) && $_SERVER['HTTP_IF_MODIFIED_SINCE'] ==  $lastModified) ||
+	            (isset($_SERVER['HTTP_IF_NONE_MATCH']) && $_SERVER['HTTP_IF_NONE_MATCH'] == $iETag)
+	    ) {
+	        $this->exportObj->setHeader("ETag", $iETag);
+	        $this->exportObj->setHeader("{$_SERVER['SERVER_PROTOCOL']} 304 Not Modified");
+	        $this->exportObj->sendheaders();
+	        
+	        exit;
+	    }
 	}
 	
 }

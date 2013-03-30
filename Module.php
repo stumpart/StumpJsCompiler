@@ -41,16 +41,7 @@ class Module implements ServiceProviderInterface
         $jsCompiler = $e->getApplication()->getServiceManager()->get("jscompiler");
         
         if(preg_match("/".__NAMESPACE__.$this->jsFileRegexPartial."/i", $path, $matches)){
-            $iETag = sha1($matches['timestamp']);
-            $lastModified = gmdate('D, d M Y H:i:s', $matches['timestamp']).' GMT';
-            
-            if (
-                    (isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) && $_SERVER['HTTP_IF_MODIFIED_SINCE'] ==  $lastModified) ||
-                    (isset($_SERVER['HTTP_IF_NONE_MATCH']) && $_SERVER['HTTP_IF_NONE_MATCH'] == $iETag)
-            ) {
-                header("{$_SERVER['SERVER_PROTOCOL']} 304 Not Modified");
-                exit;
-            }
+            $jsCompiler->ifNotModified($matches);
             
             $jsCompiler->compile($matches['type'], $matches['timestamp']);
             
