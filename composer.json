@@ -1,5 +1,5 @@
 {
-    "name": "stumpart/stumpjscompiler",
+    "name": "stumpart/stumpjs-compiler",
     "description": "Javascript compiler for ZF2",
     "license": "BSD-3-Clause",
     "keywords": [
@@ -11,7 +11,8 @@
     "authors":[
         {
             "name":    "Barrington Henry",
-            "email":   "stump500@gmail.com"
+            "email":   "stump500@gmail.com",
+            "role":    "Developer"
         }
     ],
     "require": {
