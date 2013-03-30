@@ -17,7 +17,7 @@
     ],
     "require": {
         "php": ">=5.3.3",
-        "zendframework/zend-cache": ">=2.1.*",
-        "zendframework/zend-mvc": ">=2.1.*"
+        "zendframework/zend-cache": ">=2.1",
+        "zendframework/zend-mvc": ">=2.1"
     }
 }
