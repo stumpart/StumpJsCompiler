@@ -22,10 +22,8 @@ class Export {
 	/**
 	 * 
 	 */
-	function __construct() {
-        
-        
-	}
+	function __construct() 
+	{}
 	
 	public function setContentType($type)
 	{
@@ -64,7 +62,8 @@ class Export {
 	          'Content-Type'    => $this->fileType,
 	          'Content-Length'  => strlen($this->contents),
 	          'Last-Modified'   => $this->LastModified,
-	          'Cache-Control'   => 'max-age='.$this->_cacheLength.', must-revalidate'
+	          'Cache-Control'   => 'max-age='.$this->_cacheLength.', must-revalidate',
+	          'ETag'            => sha1($this->LastModified)
 	         );  
 	}
 	

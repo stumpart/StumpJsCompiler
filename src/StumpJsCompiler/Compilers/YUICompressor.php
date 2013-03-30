@@ -19,8 +19,6 @@ class YUICompressor extends ACompiler
      */
     protected $fileToMinify;
 
-    
-
 
 	public function __construct(JsCompiler $comp)
 	{
@@ -38,21 +36,8 @@ class YUICompressor extends ACompiler
 	}
 
 
-
-    public function setMinifiedOutput()
-    {
-        if($this->minifiedDirectory !== null){
-            $baseName = $this->fileToMinify->getBasename('.js');
-            $this->minifiedOutput = $this->minifiedDirectory.DIRECTORY_SEPARATOR.$baseName.'-min.js';
-        }
-    }
-
     public function minify()
     {}
 
-    public function fileToMinify($m)
-    {
-        $this->fileToMinify = new \SplFileInfo($m);
-    }
 
 }

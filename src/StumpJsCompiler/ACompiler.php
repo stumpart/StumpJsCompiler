@@ -146,4 +146,17 @@ abstract class ACompiler implements IMinify{
     {
         return $this->minifiedFiles;
     }
+    
+    public function setMinifiedOutput()
+    {
+        if($this->minifiedDirectory !== null){
+            $baseName = $this->fileToMinify->getBasename('.js');
+            $this->minifiedOutput = $this->minifiedDirectory.DIRECTORY_SEPARATOR.$baseName.'-min.js';
+        }
+    }
+    
+    public function fileToMinify($m)
+    {
+        $this->fileToMinify = new \SplFileInfo($m);
+    }
 }

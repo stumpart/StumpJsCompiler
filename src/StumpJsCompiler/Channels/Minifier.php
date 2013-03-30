@@ -13,7 +13,10 @@ class Minifier extends AChannel {
     protected $minifyAdapter;
 
     protected $fileContents;
-
+    /**
+     * 
+     * @var Js
+     */
     protected $compilerFactory;
 
     protected $compilers = array(
@@ -62,7 +65,11 @@ class Minifier extends AChannel {
     {
         $this->minifyAdapter = $adapter;
     }
-
+    
+    /**
+     * 
+     * @return JsCompiler
+     */
     public function getCompilerFactory()
     {
         return $this->compilerFactory;
