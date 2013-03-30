@@ -1,0 +1,22 @@
+{
+    "name": "stumpart/stumpjscompiler",
+    "description": "Javascript compiler for ZF2",
+    "license": "BSD-3-Clause",
+    "keywords": [
+        "javascript",
+        "compiler",
+        "minify"
+    ],
+    "homepage": "https://github.com/stumpart/StumpJsCompiler",
+    "authors":[
+        {
+            "name":    "Barrington Henry",
+            "email":   "stump500@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.3",
+        "zendframework/zend-cache": ">=2.1.*",
+        "zendframework/zend-mvc": ">=2.1.*"
+    }
+}
