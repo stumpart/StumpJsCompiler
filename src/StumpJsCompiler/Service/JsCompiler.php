@@ -112,8 +112,8 @@ class JsCompiler implements FactoryInterface
         //create export object
         $this->exportObj = new Export();
            
-		return $this;
-	}
+        return $this;
+    }
     /**
      * This serves as the driver to the compilation process.
      * Serves as the starting point for javascript/css compilation
@@ -123,8 +123,8 @@ class JsCompiler implements FactoryInterface
      * @param string $type The type of the compilation
      * @param int $timestamp the timestamp of the last change made to the javascript files
      */
-	public function compile($type, $timestamp)
-	{
+    public function compile($type, $timestamp)
+    {
         $this->type = $type;
         $this->timeStamp = $timestamp;
         $this->gatherSrcFiles($type);
@@ -140,39 +140,39 @@ class JsCompiler implements FactoryInterface
         $this->exportObj->setContents($contents);
         $this->prepareForExport();
         $this->exportObj->send();
-	}
-	
-	/**
-	 * 
-	 * @return string
-	 */
-	public function runActions()
-	{
-	    $contents = '';
-	    $actionsCollection = (array)$this->config['actions'];
-	    foreach($actionsCollection as $action)
-	    {
-	        $actionObj = new $action($this);
-	        $contents = $actionObj->setContents($contents)->run();	      
-	    }
-	    
-	    return $contents;
-	}
-	
-	/**
-	 * Prepare the results of the compilation process for export to 
-	 * the browser
-	 * 
-	 * @return \StumpJsCompiler\Export
-	 */
-	protected function prepareForExport()
-	{
-	    $this->exportObj->setContentType($this->contentTypes['javascript']);
-	    $this->exportObj->setCacheLength($this->config['builds'][$this->type]['cache-lifetime']);
-	    $this->exportObj->setLastModified($this->timeStamp);
-	    $this->exportObj->initHeaders();
-	    
-	    $compilerService = $this;
+    }
+    
+    /**
+     * 
+     * @return string
+     */
+    public function runActions()
+    {
+        $contents = '';
+        $actionsCollection = (array)$this->config['actions'];
+        foreach($actionsCollection as $action)
+        {
+            $actionObj = new $action($this);
+            $contents = $actionObj->setContents($contents)->run();	      
+        }
+        
+        return $contents;
+    }
+    
+    /**
+     * Prepare the results of the compilation process for export to 
+     * the browser
+     * 
+     * @return \StumpJsCompiler\Export
+     */
+    protected function prepareForExport()
+    {
+        $this->exportObj->setContentType($this->contentTypes['javascript']);
+        $this->exportObj->setCacheLength($this->config['builds'][$this->type]['cache-lifetime']);
+        $this->exportObj->setLastModified($this->timeStamp);
+        $this->exportObj->initHeaders();
+        
+        $compilerService = $this;
         $this->exportObj->getEventManager()->attach(Export::PRE_EXPORT, function($e) use ($compilerService){
             $config = $compilerService->getConfig();
             $compilationConfig = $config['builds'][$compilerService->getType()];
@@ -181,18 +181,18 @@ class JsCompiler implements FactoryInterface
                $e->getTarget()->setHeaders($compilationConfig['headers']);
             }
         });
-	    
-	    return $this->exportObj;
-	}
+        
+        return $this->exportObj;
+    }
     /**
      * Generates and sets the cache key
      * 
      * @return null
      */
-	public function setCacheKey()
-	{
-	    $this->cachKey = $this->type.'_'.$this->timeStamp;
-	}
+    public function setCacheKey()
+    {
+        $this->cachKey = $this->type.'_'.$this->timeStamp;
+    }
 
     /**
      * Generates or sets the location of the javascript source
@@ -255,25 +255,25 @@ class JsCompiler implements FactoryInterface
      * 
      * @return \StumpJsCompiler\Service\unknown_type
      */
-	public function getConfig()
-	{
-		return $this->config;
-	}
-	
-	/**
-	 * 
-	 * @param ServiceLocatorInterface $serviceLocator
-	 */
-	public function setConfig(ServiceLocatorInterface $serviceLocator)
-	{
-		$this->config = $serviceLocator->get('config');
-		$this->config['compiler']['modulename'] = basename(realpath(__DIR__."/../../../"));
-	}
+    public function getConfig()
+    {
+        return $this->config;
+    }
     
-	/**
-	 * 
-	 * @return \StumpJsCompiler\Service\unknown_type
-	 */
+    /**
+     * 
+     * @param ServiceLocatorInterface $serviceLocator
+     */
+    public function setConfig(ServiceLocatorInterface $serviceLocator)
+    {
+        $this->config = $serviceLocator->get('config');
+        $this->config['compiler']['modulename'] = basename(realpath(__DIR__."/../../../"));
+    }
+    
+    /**
+     * 
+     * @return \StumpJsCompiler\Service\unknown_type
+     */
     public function getFiles()
     {
         return $this->files;
@@ -283,71 +283,71 @@ class JsCompiler implements FactoryInterface
      * 
      * @return \StumpJsCompiler\Service\unknown_type
      */
-	public function getMinifierName()
-	{
-		return $this->compiler;
-	}
+    public function getMinifierName()
+    {
+        return $this->compiler;
+    }
     
-	/**
-	 * 
-	 * @return string
-	 */
-	public function getBinLoc()
-	{
-		return $this->binLoc;
-	}
-	/**
-	 * Gets the type of location
-	 *  
-	 * @return string The type
-	 */
-	public function getType()
-	{
-		return $this->type;
-	}
-
-	/**
-	 * 
-	 * @param unknown_type $bin
-	 */
-	public function setBinLoc($bin = null)
-	{
-		if($bin === null){
-			$this->binLoc = realpath(__DIR__."/../../../bin");
-
-			if(!$this->binLoc){
-				throw new StumpJsCompiler\Exception\InvalidLocationException('Bin location not found');
-			}
-		}else{
+    /**
+     * 
+     * @return string
+     */
+    public function getBinLoc()
+    {
+        return $this->binLoc;
+    }
+    /**
+     * Gets the type of location
+     *  
+     * @return string The type
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+    
+    /**
+     * 
+     * @param unknown_type $bin
+     */
+    public function setBinLoc($bin = null)
+    {
+        if($bin === null){
+            $this->binLoc = realpath(__DIR__."/../../../bin");
+            
+            if(!$this->binLoc){
+                \StumpJsCompiler\Exception\Factory::throwInvalidLocation();
+            }
+        }else{
             $this->binLoc = $bin;
-		}
-	}
-	
-	/**
-	 * @return null
-	 */
-	public function setWorkArea()
-	{
-		$this->config['workarea'] = realpath($this->config['compiler']['workareaDir']).
-									DIRECTORY_SEPARATOR.$this->config['compiler']['modulename'];
-	}
-	
-	
-	public function ifNotModified(array $matches)
-	{
-	    $iETag = sha1($matches['timestamp']);
-	    $lastModified = gmdate('D, d M Y H:i:s', $matches['timestamp']).' GMT';
-	    
-	    if (
-	            (isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) && $_SERVER['HTTP_IF_MODIFIED_SINCE'] ==  $lastModified) ||
-	            (isset($_SERVER['HTTP_IF_NONE_MATCH']) && $_SERVER['HTTP_IF_NONE_MATCH'] == $iETag)
-	    ) {
-	        $this->exportObj->setHeader("ETag", $iETag);
-	        $this->exportObj->setHeader("{$_SERVER['SERVER_PROTOCOL']} 304 Not Modified");
-	        $this->exportObj->sendheaders();
-	        
-	        exit;
-	    }
-	}
+        }
+    }
+    
+    /**
+     * @return null
+     */
+    public function setWorkArea()
+    {
+        $this->config['workarea'] = realpath($this->config['compiler']['workareaDir']).
+                                    DIRECTORY_SEPARATOR.$this->config['compiler']['modulename'];
+    }
+    
+    
+    public function ifNotModified(array $matches)
+    {
+        $iETag = sha1($matches['timestamp']);
+        $lastModified = gmdate('D, d M Y H:i:s', $matches['timestamp']).' GMT';
+        
+        if (
+                (isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) && $_SERVER['HTTP_IF_MODIFIED_SINCE'] ==  $lastModified) ||
+                (isset($_SERVER['HTTP_IF_NONE_MATCH']) && $_SERVER['HTTP_IF_NONE_MATCH'] == $iETag)
+        ) {
+            $this->exportObj->setHeader("ETag", $iETag);
+            $this->exportObj->setHeader("{$_SERVER['SERVER_PROTOCOL']} 304 Not Modified");
+            $this->exportObj->sendheaders();
+            
+            exit;
+        }
+    }
 	
 }

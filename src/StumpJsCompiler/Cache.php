@@ -33,22 +33,22 @@ class Cache {
                   'exception_handler' => array('throw_exceptions' => false),
               ),
         ));
-	}
-	
-	public function get($key)
-	{
+    }
+    
+    public function get($key)
+    {
         return $this->cacheObj->getitem($key);
-	}
-	
-	public function set($key, $item)
-	{
-	    $this->cacheObj->setItem($key, $item);
-	}
-	
-	public static function setDefaultStorage($default)
-	{
-	    self::$defaultStorage  = $default;
-	}
+    }
+    
+    public function set($key, $item)
+    {
+        $this->cacheObj->setItem($key, $item);
+    }
+    
+    public static function setDefaultStorage($default)
+    {
+        self::$defaultStorage  = $default;
+    }
 }
 
 ?>

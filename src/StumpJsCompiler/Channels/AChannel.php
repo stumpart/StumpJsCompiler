@@ -15,29 +15,29 @@ abstract class AChannel implements EventManagerAwareInterface, CompilerServiceAc
 	
 	protected $contents;
 
-	public function setEventManager(EventManagerInterface $events)
-	{
-		$events->setIdentifiers(array(
-				__CLASS__,
-				get_called_class(),
-		));
-		$this->events = $events;
-		return $this;
-	}
+    public function setEventManager(EventManagerInterface $events)
+    {
+        $events->setIdentifiers(array(
+            __CLASS__,
+            get_called_class(),
+        ));
+        $this->events = $events;
+        return $this;
+    }
 
-	public function getEventManager()
-	{
-		if (null === $this->events) {
-			$this->setEventManager(new EventManager());
-		}
-		return $this->events;
-	}
+    public function getEventManager()
+    {
+        if (null === $this->events) {
+            $this->setEventManager(new EventManager());
+        }
+        return $this->events;
+    }
 
     abstract public function run ();
 
 
-	/** 
-	 * (non-PHPdoc)
+    /** 
+     * (non-PHPdoc)
      * @see \StumpJsCompiler\CompilerServiceInterface::getContents()
      */
     public function getContents ()

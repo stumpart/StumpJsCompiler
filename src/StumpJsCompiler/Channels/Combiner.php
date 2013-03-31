@@ -7,9 +7,9 @@ use StumpJsCompiler\Service\JsCompiler;
 
 class Combiner extends AChannel {
 
-	protected $files;
+    protected $files;
 
-	protected $destination;
+    protected $destination;
 
 
     public function __construct(JsCompiler $js)
@@ -17,8 +17,8 @@ class Combiner extends AChannel {
         $this->compilerFactory = $js;
     }
 
-	public function run()
-	{
+    public function run()
+    {
         $this->getEventManager()->trigger('before.combine', $this, array());
         $combinedResults = "";
         
@@ -29,9 +29,9 @@ class Combiner extends AChannel {
                 }
             }   
         }
-
+    
         $this->getEventManager()->trigger('after.combine', $this, array());
-
+    
         return $combinedResults;
-	}
+    }
 }

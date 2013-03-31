@@ -9,35 +9,33 @@ use StumpJsCompiler\Service\JsCompiler;
 
 class YUICompressor extends ACompiler
 {
-	protected $commandTemplate  = "java -jar %s %s -o %s";
-
-	protected $executable;
-
-	protected $combined;
+    protected $commandTemplate  = "java -jar %s %s -o %s";
+    
+    protected $executable;
+    
+    protected $combined;
     /**
      * @var SplFileInfo
      */
     protected $fileToMinify;
 
 
-	public function __construct(JsCompiler $comp)
-	{
-		parent::__construct($comp);
-	}
+    public function __construct(JsCompiler $comp)
+    {
+        parent::__construct($comp);
+    }
 
 
-	public function prepareExecution()
-	{
-	    $this->CreateMinifiedDir();
+    public function prepareExecution()
+    {
+        $this->CreateMinifiedDir();
         $this->setMinifiedOutput();
-
-		$this->command = sprintf($this->commandTemplate, $this->executable,
-		                          $this->fileToMinify->getRealPath(), $this->minifiedOutput);
-	}
+    
+        $this->command = sprintf($this->commandTemplate, $this->executable,
+                                  $this->fileToMinify->getRealPath(), $this->minifiedOutput);
+    }
 
 
     public function minify()
     {}
-
-
 }
