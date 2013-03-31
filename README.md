@@ -34,7 +34,8 @@ return array(
 Configuration
 -------------
 
-The configurations need to get StumpjsCompiler up and running. This file is the 
+The configurations need to get StumpjsCompiler up and running. This file is the module config file
+config/module.config.php
 
 ```php
 <?php
@@ -80,7 +81,8 @@ return array(
 Definitions
 cache-lifetime - The time in seconds that states how long the browser should cache the compiled javascript file
 files          - The list of javascript files to include in the compilation
-headers        - Additional headers that you may wish to send in the response
+headers        - Additional headers that you may wish to send in the response. This will be added to the 
+                 default list of headers.
 
 ```
 
@@ -88,11 +90,13 @@ headers        - Additional headers that you may wish to send in the response
 
 With this module installed and configured, using StumpjsCompiler in your view scripts is easy:
 'compiledScript' is a view helper that will enable the user to enter a build name, eg. 'jstest1', which 
-will then map to the 'jstest1' under 'builds' in the module.config.php file.
+will then map to the 'jstest1' under 'builds' in the module.config.php file. 
 
 ```php
 <?php echo $this->compiledScript('jstest1');?>
 ```
+
+This view helper call can be placed anywhere in ur view script in the head or body tag.
 
 
 

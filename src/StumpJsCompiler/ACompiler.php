@@ -72,13 +72,13 @@ abstract class ACompiler implements IMinify{
         return $this;
     }
 
-	/**
-	 *
-	 * @param array $config
-	 */
+    /**
+     *
+     * @param array $config
+     */
     public function setConfig(array $config)
     {
-    	$this->config = $config;
+       $this->config = $config;
     }
 
     /**
@@ -87,9 +87,8 @@ abstract class ACompiler implements IMinify{
      */
     public function getSrcLocation()
     {
-    	return $this->srcLocation;
+        return $this->srcLocation;
     }
-
 
 
     private function execute()
