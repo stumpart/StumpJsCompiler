@@ -39,6 +39,11 @@ class CompiledScript extends AbstractHelper
         $this->renderer = new PhpRenderer();
     }
     
+    /**
+     * 
+     * @param string $type
+     * @return @string
+     */
     public function __invoke($type)
     {
       $baseUrl = $this->serviceLocator->get( 'Request' )->getUri()->normalize();

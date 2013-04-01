@@ -40,7 +40,11 @@ abstract class ACompiler implements IMinify{
         $this->prepareExecution();
         $this->execute();
     }
-
+    
+    /**
+     * 
+     * @return string
+     */
     public function getExecutable()
     {
         return $this->executable;
@@ -59,11 +63,14 @@ abstract class ACompiler implements IMinify{
             $config = $this->compFactory->getConfig();
             $filekey = $config['compiler']['current'];
             
-            if(isset($config['executables'][$filekey])){
-                $file = $config['executables'][$filekey];
+            if(isset($config['executables'][$filekey]) && 
+               isset($config['executables'][$filekey]['file']))
+            {
+                $file = $config['executables'][$filekey]['file'];
             }else{
                 \StumpJsCompiler\Exception\Factory::throwUnknownExecutable();
             }
+            
             $this->executable = $this->compFactory->getBinLoc().DIRECTORY_SEPARATOR.$file;
         }else{
             $this->executable = $exec;
@@ -90,7 +97,9 @@ abstract class ACompiler implements IMinify{
         return $this->srcLocation;
     }
 
-
+    /**
+     * @return null
+     */
     private function execute()
     {
         exec(escapeshellcmd($this->command), $output, $returnVar);
@@ -105,13 +114,20 @@ abstract class ACompiler implements IMinify{
     public function checkRequirements()
     {}
     
+    /**
+     * 
+     * @throws \Exception
+     * @return \StumpJsCompiler\ACompiler
+     */
     public function createMinifiedDir()
     {
         if(!file_exists($this->minifiedDirectory)){
             $res = mkdir($this->minifiedDirectory, 0777, true);
             
             if(!$res){
-            	throw new \Exception('cannot create minified directory');
+                \StumpJsCompiler\Exception\Factory::throwException(
+                        'cannot create minified directory, maybe permissions issue'
+                     );
             }
         }
         
@@ -129,11 +145,19 @@ abstract class ACompiler implements IMinify{
     	return $this;
     }
     
+    /**
+     * (non-PHPdoc)
+     * @see \StumpJsCompiler\Channels\IMinify::getMinifiedDirectory()
+     */
     public function getMinifiedDirectory()
     {
         return $this->minifiedDirectory;
     }
     
+    /**
+     * (non-PHPdoc)
+     * @see \StumpJsCompiler\Channels\IMinify::getMinifiedFiles()
+     */
     public function getMinifiedFiles()
     {
         return $this->minifiedFiles;

@@ -32,6 +32,11 @@ final class Factory
                 );
     }
     
+    public static function throwException($message)
+    {
+        throw new \Exception($message);  
+    }
+    
     /**
      * 
      * @param string $key

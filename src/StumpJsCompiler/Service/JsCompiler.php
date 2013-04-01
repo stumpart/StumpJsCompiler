@@ -2,6 +2,8 @@
 
 namespace StumpJsCompiler\Service;
 
+use Zend\Config\Config;
+
 use StumpJsCompiler\Exception\InvalidLocationException;
 use StumpJsCompiler\Channels\Minifier;
 use Zend\ServiceManager\FactoryInterface;
@@ -143,6 +145,7 @@ class JsCompiler implements FactoryInterface
     }
     
     /**
+     * Executes the collection of actions that were placed in the config
      * 
      * @return string
      */
@@ -172,15 +175,22 @@ class JsCompiler implements FactoryInterface
         $this->exportObj->setLastModified($this->timeStamp);
         $this->exportObj->initHeaders();
         
+        /**
+         * listen for the before export trigger, then add additional headers that were placed in
+         * the Config 
+         */
         $compilerService = $this;
-        $this->exportObj->getEventManager()->attach(Export::PRE_EXPORT, function($e) use ($compilerService){
-            $config = $compilerService->getConfig();
-            $compilationConfig = $config['builds'][$compilerService->getType()];
-             
-            if(isset( $compilationConfig['headers'] )){
-               $e->getTarget()->setHeaders($compilationConfig['headers']);
+        $this->exportObj->getEventManager()->attach(Export::PRE_EXPORT, 
+           function($e) use ($compilerService)
+           {
+                $config = $compilerService->getConfig();
+                $compilationConfig = $config['builds'][$compilerService->getType()];
+                 
+                if(isset( $compilationConfig['headers'] )){
+                   $e->getTarget()->setHeaders($compilationConfig['headers']);
+                }
             }
-        });
+        );
         
         return $this->exportObj;
     }
@@ -296,6 +306,7 @@ class JsCompiler implements FactoryInterface
     {
         return $this->binLoc;
     }
+    
     /**
      * Gets the type of location
      *  
@@ -308,7 +319,7 @@ class JsCompiler implements FactoryInterface
     
     /**
      * 
-     * @param unknown_type $bin
+     * @param string $bin
      */
     public function setBinLoc($bin = null)
     {
@@ -332,7 +343,11 @@ class JsCompiler implements FactoryInterface
                                     DIRECTORY_SEPARATOR.$this->config['compiler']['modulename'];
     }
     
-    
+    /**
+     * 
+     * @param array $matches
+     * return null
+     */
     public function ifNotModified(array $matches)
     {
         $iETag = sha1($matches['timestamp']);
