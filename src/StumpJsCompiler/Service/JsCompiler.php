@@ -346,7 +346,7 @@ class JsCompiler implements FactoryInterface
     /**
      * 
      * @param array $matches
-     * return null
+     * @return null
      */
     public function ifNotModified(array $matches)
     {
@@ -364,5 +364,4 @@ class JsCompiler implements FactoryInterface
             exit;
         }
     }
-	
 }

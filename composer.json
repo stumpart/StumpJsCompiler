@@ -1,5 +1,6 @@
 {
     "name": "stumpart/stumpjs-compiler",
+    "version":0.0.1,
     "description": "Javascript compiler for ZF2",
     "license": "BSD-3-Clause",
     "keywords": [
@@ -19,5 +20,13 @@
         "php": ">=5.3.3",
         "zendframework/zend-cache": ">=2.1",
         "zendframework/zend-mvc": ">=2.1"
+    },
+    "autoload": {
+        "psr-0": {
+            "StumpJsCompiler": "src/"
+        },
+        "classmap": [
+            "./"
+        ]
     }
 }

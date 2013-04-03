@@ -15,8 +15,14 @@ First, add the following line into your `composer.json` file:
 
 ```json
 "require": {
-    "stumpart/stumpjs-compiler": ">=0.0.1"
+    "stumpart/stumpjs-compiler": "dev-master"
 }
+```
+
+and then run 
+
+```json
+    php composer.phar update
 ```
 
 Then, enable the module by adding `StumpJsCompiler` in your application.config.php file.
@@ -30,6 +36,13 @@ return array(
     ),
 );
 ```
+
+Requirements
+------------
+
+- Let the webserver user have write access to the application's data folder.
+- Ensure that the Java Virtual Machine is installed on your web server. The compiler executables are jar files
+  that will need this to execute
 
 Configuration
 -------------
