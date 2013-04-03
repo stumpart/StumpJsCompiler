@@ -1,6 +1,6 @@
 {
     "name": "stumpart/stumpjs-compiler",
-    "version":0.0.1,
+    "version":"0.0.1",
     "description": "Javascript compiler for ZF2",
     "license": "BSD-3-Clause",
     "keywords": [
