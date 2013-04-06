@@ -3,7 +3,7 @@ namespace StumpJsCompiler\Exception;
 
 
 /**
- * Manufactors exeptions
+ * Manufactures exceptions
  *
  * @author barringtonhenry
  *        
@@ -35,6 +35,16 @@ final class Factory
     public static function throwException($message)
     {
         throw new \Exception($message);  
+    }
+    
+    public static function throwCompilerExecutionException($message)
+    {
+        throw new CompilerExecutionException($message);
+    }
+    
+    public static function throwRequirementsNotSatisfied($message)
+    {
+        throw new RequirementsNotSatisfiedException($message);
     }
     
     /**

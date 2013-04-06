@@ -26,6 +26,8 @@ class GClosure extends ACompiler{
     
         $this->command = sprintf($this->commandTemplate, $this->executable,
                 $this->fileToMinify->getRealPath(), $this->minifiedOutput);
+        
+        //echo $this->command;
     }
     
 	/** (non-PHPdoc)

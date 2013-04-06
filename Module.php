@@ -40,7 +40,7 @@ class Module implements ServiceProviderInterface
         $path = $request->getRequestUri();
         $jsCompiler = $e->getApplication()->getServiceManager()->get("jscompiler");
         
-        if(preg_match("/".__NAMESPACE__.$this->jsFileRegexPartial."/i", $path, $matches)){
+        if(preg_match("/".__NAMESPACE__.$this->jsFileRegexPartial."/i", $path, $matches) === 1){
             $jsCompiler->ifNotModified($matches);
             
             $jsCompiler->compile($matches['type'], $matches['timestamp']);
