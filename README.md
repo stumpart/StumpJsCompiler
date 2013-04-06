@@ -78,13 +78,23 @@ return array(
      * supports it or that you add that functionality in your adapter class
      */
     'actions' => array(
-        'minifier'   => 'StumpJsCompiler\Channels\Minifier', //minify each javascript file
-        'combiner'   => 'StumpJsCompiler\Channels\Combiner' //combine a list of javascript files into one
+        //minify each javascript file
+        'minifier'   => 'StumpJsCompiler\Channels\Minifier',
+        
+        //combine a list of javascript files into one
+        'combiner'   => 'StumpJsCompiler\Channels\Combiner'
     ),
         
     'compiler' => array(
-        'current'       => 'closure',//The current compiler to use for compilation
-        'storageAdapter'=> 'filesystem',//can use the various caching mechanisms provided by the ZF2
+         //The current compiler to use for compilation
+        'current'       => 'closure',
+         
+        //can use the various caching mechanisms provided by the ZF2
+        'storageAdapter'=> 'filesystem',
+        
+        //work area for the jscompiler module, will create a StumpJsCompiler directory
+        //where it stores temporary files for updating. So the web server needs to have write permissions
+        //if no permissions, will use the /tmp/ directory and leave a notice in the log files
         'workareaDir'   => __DIR__ . '/../../../data'
     ),
         
