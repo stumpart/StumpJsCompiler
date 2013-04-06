@@ -41,7 +41,7 @@ return array(
         
         //work area for the jscompiler module, will create a StumpJsCompiler directory
         //where it stores temporary files for updating. So the web server needs to have write permissions
-        //if no permissions, will use the /tmp/ directory and leave a notice in the log files
+        //if no permissions, will use the /tmp/ directory. If still not able to write, we throw an exception
         'workareaDir'   => __DIR__ . '/../../../data'
     ),
         
